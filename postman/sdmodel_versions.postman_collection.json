@@ -1,0 +1,163 @@
+{
+    "info": {
+        "name": "SD Model Versions",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Authentication",
+            "item": [
+                {
+                    "name": "Login as Admin",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"email\": \"aoubido075@gmail.com\",\n    \"password\": \"123456789\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/auth/login",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "auth", "login"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        },
+        {
+            "name": "SD Model Versions",
+            "item": [
+                {
+                    "name": "Create SD Model Version",
+                    "request": {
+                        "method": "POST",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"version_name\": \"SDXL 2.0\",\n    \"description\": \"Latest version of SDXL\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/models/sd/versions",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "models", "sd", "versions"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "List SD Model Versions",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/models/sd/versions?skip=0&limit=100",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "models", "sd", "versions"],
+                            "query": [
+                                {
+                                    "key": "skip",
+                                    "value": "0"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "100"
+                                }
+                            ]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Get SD Model Version by ID",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/models/sd/versions/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "models", "sd", "versions", "1"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Update SD Model Version",
+                    "request": {
+                        "method": "PUT",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            },
+                            {
+                                "key": "Content-Type",
+                                "value": "application/json",
+                                "type": "text"
+                            }
+                        ],
+                        "body": {
+                            "mode": "raw",
+                            "raw": "{\n    \"version_name\": \"SDXL 2.0 Updated\",\n    \"description\": \"Updated description\"\n}"
+                        },
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/models/sd/versions/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "models", "sd", "versions", "1"]
+                        }
+                    },
+                    "response": []
+                },
+                {
+                    "name": "Delete SD Model Version",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/models/sd/versions/1",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "models", "sd", "versions", "1"]
+                        }
+                    },
+                    "response": []
+                }
+            ]
+        }
+    ]
+}

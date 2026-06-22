@@ -1,0 +1,75 @@
+&lt;mxfile host="app.diagrams.net" modified="2025-03-08T15:52:01.000Z" agent="Mozilla/5.0" version="21.1.2" type="device"&gt;
+  &lt;diagram id="img-gen-schema" name="Image Generation Platform Schema"&gt;
+    &lt;mxGraphModel dx="1422" dy="798" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" background="#ffffff"&gt;
+      &lt;root&gt;
+        &lt;mxCell id="0"/&gt;
+        &lt;mxCell id="1" parent="0"/&gt;
+        
+        &lt;!-- Client Table --&gt;
+        &lt;mxCell id="client" value="client&#xa;--&#xa;id: UUID PK&#xa;name: varchar(255)&#xa;status: varchar(50)&#xa;created_at: timestamptz&#xa;updated_at: timestamptz&#xa;subscription_tier: varchar(50)&#xa;max_users: integer&#xa;max_storage_gb: integer" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=120;fillColor=#dae8fc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#6c8ebf;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="40" y="40" width="200" height="200" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Member Table --&gt;
+        &lt;mxCell id="member" value="member&#xa;--&#xa;id: UUID PK&#xa;organization_id: UUID FK&#xa;email: varchar(255)&#xa;password_hash: varchar(255)&#xa;first_name: varchar(100)&#xa;last_name: varchar(100)&#xa;role: varchar(50)&#xa;status: varchar(50)&#xa;created_at: timestamptz&#xa;updated_at: timestamptz&#xa;last_login: timestamptz" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=220;fillColor=#d5e8d4;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#82b366;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="320" y="40" width="200" height="240" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Event Table --&gt;
+        &lt;mxCell id="event" value="event&#xa;--&#xa;id: UUID PK&#xa;organization_id: UUID FK&#xa;name: varchar(255)&#xa;description: text&#xa;start_date: timestamptz&#xa;end_date: timestamptz&#xa;status: varchar(50)&#xa;created_at: timestamptz&#xa;updated_at: timestamptz&#xa;created_by: UUID FK&#xa;max_participants: integer&#xa;location: varchar(255)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=220;fillColor=#ffe6cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d79b00;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="600" y="40" width="200" height="240" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Image Table --&gt;
+        &lt;mxCell id="image" value="image&#xa;--&#xa;id: UUID PK&#xa;event_id: UUID FK&#xa;created_by: UUID FK&#xa;original_url: text&#xa;generated_url: text&#xa;prompt: text&#xa;status: varchar(50)&#xa;created_at: timestamptz&#xa;updated_at: timestamptz&#xa;metadata: jsonb&#xa;processing_time: integer" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=200;fillColor=#fff2cc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#d6b656;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="880" y="40" width="200" height="220" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Attendee Table --&gt;
+        &lt;mxCell id="attendee" value="attendee&#xa;--&#xa;id: UUID PK&#xa;event_id: UUID FK&#xa;organization_id: UUID FK&#xa;name: varchar(255)&#xa;email: varchar(255)&#xa;phone: varchar(50)&#xa;registration_code: varchar(100)&#xa;check_in_time: timestamptz&#xa;check_out_time: timestamptz&#xa;created_at: timestamptz&#xa;created_by: UUID FK" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=200;fillColor=#f8cecc;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#b85450;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="40" y="320" width="200" height="220" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Key Table --&gt;
+        &lt;mxCell id="key" value="key&#xa;--&#xa;id: UUID PK&#xa;organization_id: UUID FK&#xa;key_hash: varchar(255)&#xa;name: varchar(100)&#xa;created_by: UUID FK&#xa;expires_at: timestamptz&#xa;created_at: timestamptz&#xa;last_used_at: timestamptz&#xa;status: varchar(50)" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=180;fillColor=#e1d5e7;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#9673a6;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="320" y="320" width="200" height="200" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Stat Table --&gt;
+        &lt;mxCell id="stat" value="stat&#xa;--&#xa;id: UUID PK&#xa;organization_id: UUID FK&#xa;event_id: UUID FK&#xa;date: date&#xa;images_generated: integer&#xa;storage_used_bytes: bigint&#xa;api_calls: integer&#xa;created_at: timestamptz&#xa;updated_at: timestamptz" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=180;fillColor=#f5f5f5;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="600" y="320" width="200" height="200" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Log Table --&gt;
+        &lt;mxCell id="log" value="log&#xa;--&#xa;id: UUID PK&#xa;organization_id: UUID FK&#xa;user_id: UUID FK&#xa;action: varchar(100)&#xa;resource_type: varchar(50)&#xa;resource_id: UUID&#xa;details: jsonb&#xa;ip_address: inet&#xa;user_agent: text&#xa;created_at: timestamptz" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=200;fillColor=#f5f5f5;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="880" y="320" width="200" height="220" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Request Table --&gt;
+        &lt;mxCell id="request" value="request&#xa;--&#xa;id: UUID PK&#xa;organization_id: UUID FK&#xa;type: varchar(50)&#xa;status: varchar(50)&#xa;details: jsonb&#xa;created_by: UUID FK&#xa;created_at: timestamptz&#xa;updated_at: timestamptz&#xa;resolved_at: timestamptz&#xa;resolved_by: UUID FK&#xa;resolution_notes: text" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=220;fillColor=#f5f5f5;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;strokeColor=#666666;fontColor=#333333;" vertex="1" parent="1"&gt;
+          &lt;mxGeometry x="40" y="600" width="200" height="240" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Relationships --&gt;
+        &lt;mxCell id="client-member" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="client" target="member"&gt;
+          &lt;mxGeometry width="100" height="100" relative="1" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id="client-event" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="client" target="event"&gt;
+          &lt;mxGeometry width="100" height="100" relative="1" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id="event-image" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="event" target="image"&gt;
+          &lt;mxGeometry width="100" height="100" relative="1" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;mxCell id="event-attendee" value="" style="edgeStyle=entityRelationEdgeStyle;fontSize=12;html=1;endArrow=ERoneToMany;startArrow=ERmandOne;rounded=0;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.25;entryDx=0;entryDy=0;" edge="1" parent="1" source="event" target="attendee"&gt;
+          &lt;mxGeometry width="100" height="100" relative="1" as="geometry"/&gt;
+        &lt;/mxCell&gt;
+
+        &lt;!-- Add more relationships here --&gt;
+
+      &lt;/root&gt;
+    &lt;/mxGraphModel&gt;
+  &lt;/diagram&gt;
+&lt;/mxfile&gt;

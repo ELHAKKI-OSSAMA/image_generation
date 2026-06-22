@@ -1,0 +1,29 @@
+[
+    {
+        "name": "Tech Conference 2025",
+        "description": "Annual conference on emerging technologies",
+        "organization_id": "36f5e8ee-7fa2-4efd-bc14-e8d3345c11c1",
+        "user_id": "14f2262e-71bb-48ac-8e7e-d037ab36df45",
+        "event_time": "2025-09-15T10:00:00",
+        "event_end_timed": "2025-09-15T17:00:00",
+        "active": true,
+        "public": false,
+        "type": "conference",
+        "location": "Online"
+
+    },
+    {
+        "name": "AI Workshop",
+        "description": "A hands-on workshop on AI and machine learning",
+        "organization_id": "36f5e8ee-7fa2-4efd-bc14-e8d3345c11c1",
+        "user_id": "3f08a487-a428-422d-9a5d-48f29c0f1b27",
+        "event_time": "2025-06-20T09:30:00",
+        "event_end_timed": "2025-06-20T16:00:00",
+        "active": true,
+        "public": false,
+        "type": "workshop",
+        "location": "Online"
+
+        
+    }
+]

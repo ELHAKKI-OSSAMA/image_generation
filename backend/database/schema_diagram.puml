@@ -1,0 +1,288 @@
+@startuml Image Generation Platform Schema
+
+' Set theme and styling
+!theme plain
+skinparam backgroundColor white
+skinparam linetype ortho
+skinparam packageStyle rectangle
+skinparam shadowing false
+
+' Custom styling
+skinparam class {
+    BackgroundColor<<Client>> LightBlue
+    BackgroundColor<<Member>> LightGreen
+    BackgroundColor<<Event>> Orange
+    BackgroundColor<<Image>> Yellow
+    BackgroundColor<<Attendee>> Pink
+    BackgroundColor<<Security>> Purple
+    BackgroundColor<<Monitoring>> Gray
+    BorderColor Black
+    ArrowColor Black
+    FontSize 12
+}
+
+' Title and header
+title Image Generation B2B Platform Database Schema
+
+package "Core Entities" {
+    class client <<Client>> {
+        + id: UUID <<PK>>
+        --
+        name: varchar(255)
+        status: varchar(50)
+        created_at: timestamptz
+        updated_at: timestamptz
+        subscription_tier: varchar(50)
+        max_users: integer
+        max_storage_gb: integer
+        ..Indexes..
+        name
+        status
+    }
+    note right of client
+        Core table for B2B organizations
+        - Manages organization settings
+        - Controls subscription tiers
+        - Enforces resource limits
+    end note
+
+    class member <<Member>> {
+        + id: UUID <<PK>>
+        --
+        # organization_id: UUID <<FK>>
+        email: varchar(255) <<unique>>
+        password_hash: varchar(255)
+        first_name: varchar(100)
+        last_name: varchar(100)
+        role: varchar(50)
+        status: varchar(50)
+        created_at: timestamptz
+        updated_at: timestamptz
+        last_login: timestamptz
+        ..Indexes..
+        email
+        organization_id
+        (organization_id, role)
+    }
+    note right of member
+        Organization staff members
+        - Admins and staff roles
+        - Secure password storage
+        - Activity tracking
+    end note
+}
+
+package "Event Management" {
+    class event <<Event>> {
+        + id: UUID <<PK>>
+        --
+        # organization_id: UUID <<FK>>
+        # created_by: UUID <<FK>>
+        name: varchar(255)
+        description: text
+        start_date: timestamptz
+        end_date: timestamptz
+        status: varchar(50)
+        created_at: timestamptz
+        updated_at: timestamptz
+        max_participants: integer
+        location: varchar(255)
+        ..Indexes..
+        organization_id
+        status
+        start_date
+        created_by
+    }
+    note right of event
+        Photo session events
+        - Event scheduling
+        - Participant management
+        - Status tracking
+    end note
+
+    class image <<Image>> {
+        + id: UUID <<PK>>
+        --
+        # event_id: UUID <<FK>>
+        # created_by: UUID <<FK>>
+        original_url: text
+        generated_url: text
+        prompt: text
+        status: varchar(50)
+        created_at: timestamptz
+        updated_at: timestamptz
+        metadata: jsonb
+        processing_time: integer
+        ..Indexes..
+        event_id
+        created_by
+        status
+        created_at
+    }
+    note right of image
+        AI-generated images
+        - Original and generated URLs
+        - Processing metadata
+        - Performance tracking
+    end note
+
+    class attendee <<Attendee>> {
+        + id: UUID <<PK>>
+        --
+        # event_id: UUID <<FK>>
+        # organization_id: UUID <<FK>>
+        # created_by: UUID <<FK>>
+        name: varchar(255)
+        email: varchar(255)
+        phone: varchar(50)
+        registration_code: varchar(100) <<unique>>
+        check_in_time: timestamptz
+        check_out_time: timestamptz
+        created_at: timestamptz
+        ..Indexes..
+        event_id
+        organization_id
+        registration_code
+        email
+    }
+    note right of attendee
+        Event participants
+        - Registration tracking
+        - Contact information
+        - Check-in/out times
+    end note
+}
+
+package "Security & Monitoring" {
+    class key <<Security>> {
+        + id: UUID <<PK>>
+        --
+        # organization_id: UUID <<FK>>
+        # created_by: UUID <<FK>>
+        key_hash: varchar(255)
+        name: varchar(100)
+        expires_at: timestamptz
+        created_at: timestamptz
+        last_used_at: timestamptz
+        status: varchar(50)
+        ..Indexes..
+        organization_id
+        key_hash
+        status
+    }
+    note right of key
+        API authentication
+        - Secure key storage
+        - Usage tracking
+        - Expiration management
+    end note
+
+    class stat <<Monitoring>> {
+        + id: UUID <<PK>>
+        --
+        # organization_id: UUID <<FK>>
+        # event_id: UUID <<FK>>
+        date: date
+        images_generated: integer
+        storage_used_bytes: bigint
+        api_calls: integer
+        created_at: timestamptz
+        updated_at: timestamptz
+        ..Indexes..
+        organization_id
+        date
+        (organization_id, date)
+    }
+    note right of stat
+        Resource usage tracking
+        - Daily statistics
+        - Storage monitoring
+        - API usage metrics
+    end note
+
+    class log <<Monitoring>> {
+        + id: UUID <<PK>>
+        --
+        # organization_id: UUID <<FK>>
+        # user_id: UUID <<FK>>
+        action: varchar(100)
+        resource_type: varchar(50)
+        resource_id: UUID
+        details: jsonb
+        ip_address: inet
+        user_agent: text
+        created_at: timestamptz
+        ..Indexes..
+        organization_id
+        user_id
+        created_at
+        action
+    }
+    note right of log
+        Security audit trail
+        - Action tracking
+        - Resource monitoring
+        - Access logging
+    end note
+
+    class request <<Security>> {
+        + id: UUID <<PK>>
+        --
+        # organization_id: UUID <<FK>>
+        # created_by: UUID <<FK>>
+        # resolved_by: UUID <<FK>>
+        type: varchar(50)
+        status: varchar(50)
+        details: jsonb
+        created_at: timestamptz
+        updated_at: timestamptz
+        resolved_at: timestamptz
+        resolution_notes: text
+        ..Indexes..
+        organization_id
+        status
+        type
+        created_at
+    }
+    note right of request
+        Access requests
+        - Feature requests
+        - Support tickets
+        - Resolution tracking
+    end note
+}
+
+' Relationships with cardinality
+client "1" -- "*" member : has >
+client "1" -- "*" event : organizes >
+client "1" -- "*" attendee : manages >
+client "1" -- "*" key : owns >
+client "1" -- "*" stat : tracks >
+client "1" -- "*" log : generates >
+client "1" -- "*" request : submits >
+
+event "1" -- "*" image : contains >
+event "1" -- "*" attendee : hosts >
+event "1" -- "*" stat : measures >
+
+member "1" -- "*" event : creates >
+member "1" -- "*" attendee : registers >
+member "1" -- "*" key : generates >
+member "1" -- "*" request : creates >
+member "1" -- "*" request : resolves >
+member "1" -- "*" log : performs >
+
+attendee "1" -- "*" image : generates >
+
+' Legend
+legend right
+    |= Symbol |= Meaning |
+    | <<PK>> | Primary Key |
+    | <<FK>> | Foreign Key |
+    | + | Public field |
+    | # | Protected field |
+    | * | Many (0 or more) |
+    | 1 | Exactly one |
+endlegend
+
+@enduml

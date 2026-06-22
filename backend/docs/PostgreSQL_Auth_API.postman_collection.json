@@ -1,0 +1,1013 @@
+{
+	"info": {
+		"_postman_id": "7b8f9a12-3456-7890-abcd-ef1234567890",
+		"name": "PostgreSQL Auth API",
+		"description": "Collection for testing the PostgreSQL Authentication API with different user roles",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin",
+			"item": [
+				{
+					"name": "Register Admin",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"admin@example.com\",\n    \"password\": \"admin_password\",\n    \"first_name\": \"Admin\",\n    \"last_name\": \"User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/register/admin",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "register", "admin"]
+						}
+					}
+				},
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"admin_token\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "admin@example.com"
+								},
+								{
+									"key": "password",
+									"value": "admin_password"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Admin Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "me"]
+						}
+					}
+				},
+				{
+					"name": "Create Subscription Plan",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Premium\",\n    \"tier\": \"premium\",\n    \"price_monthly\": 99,\n    \"price_yearly\": 990,\n    \"max_users\": 10,\n    \"max_storage_gb\": 100,\n    \"max_api_calls_per_month\": 10000,\n    \"features\": {\n        \"priority_support\": true,\n        \"custom_models\": true\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/subscription-plans",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "subscription-plans"]
+						}
+					}
+				},
+				{
+					"name": "List All Subscription Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/subscription-plans",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "subscription-plans"]
+						}
+					}
+				},
+				{
+					"name": "Approve Organization Verification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"notes\": \"All documents verified successfully\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/verifications/{{org_id}}/approve",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "verifications", "{{org_id}}", "approve"]
+						}
+					}
+				},
+				{
+					"name": "Reject Organization Verification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{admin_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"notes\": \"Business license expired\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/admin/verifications/{{org_id}}/reject",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "admin", "verifications", "{{org_id}}", "reject"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Organization",
+			"item": [
+				{
+					"name": "Register Organization",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"org@example.com\",\n    \"password\": \"org_password\",\n    \"first_name\": \"Org\",\n    \"last_name\": \"Admin\",\n    \"organization_name\": \"Test Organization\",\n    \"phone\": \"+1234567890\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/register/organization",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "register", "organization"]
+						}
+					}
+				},
+				{
+					"name": "Organization Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"org_token\", jsonData.access_token);",
+									"pm.environment.set(\"org_id\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "org@example.com"
+								},
+								{
+									"key": "password",
+									"value": "org_password"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get Organization Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "me"]
+						}
+					}
+				},
+				{
+					"name": "Submit Verification",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"business_type\": \"corporation\",\n    \"business_description\": \"AI Image Generation Company\",\n    \"documents\": [\n        {\n            \"document_type\": \"business_license\",\n            \"file_url\": \"https://example.com/license.pdf\",\n            \"file_name\": \"business_license.pdf\",\n            \"mime_type\": \"application/pdf\",\n            \"file_size\": 1024\n        }\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/submit-verification",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "submit-verification"]
+						}
+					}
+				},
+				{
+					"name": "Get Verification Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/verification-status",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "verification-status"]
+						}
+					}
+				},
+				{
+					"name": "List Available Plans",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/subscription-plans",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "subscription-plans"]
+						}
+					}
+				},
+				{
+					"name": "Get Current Subscription",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/current-subscription",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "current-subscription"]
+						}
+					}
+				},
+				{
+					"name": "Update Subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"plan_id\": \"123e4567-e89b-12d3-a456-426614174000\",\n    \"billing_cycle\": \"monthly\",\n    \"billing_info\": {\n        \"billing_email\": \"billing@example.com\",\n        \"billing_address\": \"123 Main St, City, Country\",\n        \"payment_method_id\": \"pm_123456789\"\n    }\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/update-subscription",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "update-subscription"]
+						}
+					}
+				},
+				{
+					"name": "Cancel Subscription",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"cancellation_reason\": \"Switching to different service\",\n    \"feedback\": \"Great service but need different features\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/cancel-subscription",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "cancel-subscription"]
+						}
+					}
+				},
+				{
+					"name": "Get Subscription History",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{org_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/organizations/subscription-history",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "organizations", "subscription-history"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "Register User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"user@example.com\",\n    \"password\": \"user_password\",\n    \"first_name\": \"Regular\",\n    \"last_name\": \"User\",\n    \"organization_id\": \"{{org_id}}\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/register/user",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "register", "user"]
+						}
+					}
+				},
+				{
+					"name": "User Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"user_token\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/x-www-form-urlencoded"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "username",
+									"value": "user@example.com"
+								},
+								{
+									"key": "password",
+									"value": "user_password"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "login"]
+						}
+					}
+				},
+				{
+					"name": "Get User Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{user_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/postgresql-auth/me",
+							"host": ["{{base_url}}"],
+							"path": ["postgresql-auth", "me"]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Models",
+			"item": [
+				{
+					"name": "SD Models",
+					"item": [
+						{
+							"name": "Create SD Model",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"SD 1.5\",\n    \"description\": \"Stable Diffusion v1.5 model\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sd",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sd"]
+								}
+							}
+						},
+						{
+							"name": "List SD Models",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sd",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sd"]
+								}
+							}
+						},
+						{
+							"name": "Get SD Model",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sd/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sd", "1"]
+								}
+							}
+						},
+						{
+							"name": "Update SD Model",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"SD 1.5 Updated\",\n    \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sd/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sd", "1"]
+								}
+							}
+						},
+						{
+							"name": "Delete SD Model",
+							"request": {
+								"method": "DELETE",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sd/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sd", "1"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Control Models",
+					"item": [
+						{
+							"name": "Create Control Model",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Canny\",\n    \"description\": \"Canny edge detection model\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-models",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-models"]
+								}
+							}
+						},
+						{
+							"name": "List Control Models",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-models",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-models"]
+								}
+							}
+						},
+						{
+							"name": "Get Control Model",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-models/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-models", "1"]
+								}
+							}
+						},
+						{
+							"name": "Update Control Model",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Canny Updated\",\n    \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-models/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-models", "1"]
+								}
+							}
+						},
+						{
+							"name": "Delete Control Model",
+							"request": {
+								"method": "DELETE",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-models/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-models", "1"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Control Modules",
+					"item": [
+						{
+							"name": "Create Control Module",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Edge Detection\",\n    \"description\": \"Edge detection module\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-modules",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-modules"]
+								}
+							}
+						},
+						{
+							"name": "List Control Modules",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-modules",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-modules"]
+								}
+							}
+						},
+						{
+							"name": "Get Control Module",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-modules/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-modules", "1"]
+								}
+							}
+						},
+						{
+							"name": "Update Control Module",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"Edge Detection Updated\",\n    \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-modules/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-modules", "1"]
+								}
+							}
+						},
+						{
+							"name": "Delete Control Module",
+							"request": {
+								"method": "DELETE",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/control-modules/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "control-modules", "1"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Sampler Modes",
+					"item": [
+						{
+							"name": "Create Sampler Mode",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"dpm++ 2m\",\n    \"description\": \"DPM++ 2m sampler\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sampler-modes",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sampler-modes"]
+								}
+							}
+						},
+						{
+							"name": "List Sampler Modes",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sampler-modes",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sampler-modes"]
+								}
+							}
+						},
+						{
+							"name": "Get Sampler Mode",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sampler-modes/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sampler-modes", "1"]
+								}
+							}
+						},
+						{
+							"name": "Update Sampler Mode",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"dpm++ 2m updated\",\n    \"description\": \"Updated description\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sampler-modes/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sampler-modes", "1"]
+								}
+							}
+						},
+						{
+							"name": "Delete Sampler Mode",
+							"request": {
+								"method": "DELETE",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/sampler-modes/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "sampler-modes", "1"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "ControlNet",
+					"item": [
+						{
+							"name": "Create ControlNet",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"model_id\": 1,\n    \"control_model_id\": 1,\n    \"control_module_id\": 1,\n    \"enabled\": true,\n    \"guidance_start\": 0,\n    \"guidance_end\": 1,\n    \"weight\": 1,\n    \"control_mode\": \"Balanced\",\n    \"resize_mode\": \"Just Resize\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/controlnet",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "controlnet"]
+								}
+							}
+						},
+						{
+							"name": "List ControlNets",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/controlnet",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "controlnet"]
+								}
+							}
+						},
+						{
+							"name": "Get ControlNet",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/controlnet/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "controlnet", "1"]
+								}
+							}
+						},
+						{
+							"name": "Update ControlNet",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"model_id\": 1,\n    \"control_model_id\": 1,\n    \"control_module_id\": 1,\n    \"enabled\": true,\n    \"guidance_start\": 0,\n    \"guidance_end\": 1,\n    \"weight\": 1,\n    \"control_mode\": \"Balanced\",\n    \"resize_mode\": \"Just Resize\"\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/controlnet/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "controlnet", "1"]
+								}
+							}
+						},
+						{
+							"name": "Delete ControlNet",
+							"request": {
+								"method": "DELETE",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/controlnet/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "controlnet", "1"]
+								}
+							}
+						}
+					]
+				},
+				{
+					"name": "Models",
+					"item": [
+						{
+							"name": "Create Model",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"My Model\",\n    \"description\": \"Custom model configuration\",\n    \"active\": true,\n    \"preview_url\": \"https://example.com/preview.jpg\",\n    \"type\": \"stable-diffusion\",\n    \"sdmodel_id\": 1,\n    \"prompt\": \"A beautiful landscape\",\n    \"negative_prompt\": \"blur, low quality\",\n    \"resize_mode\": 0,\n    \"steps\": 20,\n    \"save_images\": true,\n    \"seed\": 42,\n    \"width\": 512,\n    \"height\": 512,\n    \"cfg_scale\": 7,\n    \"sampler_mode_id\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models"]
+								}
+							}
+						},
+						{
+							"name": "List Models",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models"]
+								}
+							}
+						},
+						{
+							"name": "Get Model",
+							"request": {
+								"method": "GET",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "1"]
+								}
+							}
+						},
+						{
+							"name": "Update Model",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"name\": \"My Model Updated\",\n    \"description\": \"Updated model configuration\",\n    \"active\": true,\n    \"preview_url\": \"https://example.com/preview.jpg\",\n    \"type\": \"stable-diffusion\",\n    \"sdmodel_id\": 1,\n    \"prompt\": \"A beautiful landscape\",\n    \"negative_prompt\": \"blur, low quality\",\n    \"resize_mode\": 0,\n    \"steps\": 20,\n    \"save_images\": true,\n    \"seed\": 42,\n    \"width\": 512,\n    \"height\": 512,\n    \"cfg_scale\": 7,\n    \"sampler_mode_id\": 1\n}"
+								},
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "1"]
+								}
+							}
+						},
+						{
+							"name": "Delete Model",
+							"request": {
+								"method": "DELETE",
+								"url": {
+									"raw": "{{base_url}}/api/v1/models/1",
+									"host": ["{{base_url}}"],
+									"path": ["api", "v1", "models", "1"]
+								}
+							}
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8000",
+			"type": "string"
+		}
+	]
+}

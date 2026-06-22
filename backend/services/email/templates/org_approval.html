@@ -1,0 +1,18 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+    <h2>Organization Approved!</h2>
+    <p>Hello {{ first_name }},</p>
+    <p>Great news! Your organization <strong>{{ org_name }}</strong> has been approved.</p>
+    <p>You can now log in and start managing your organization:</p>
+    <a href="{{ login_url }}" 
+       style="display: inline-block; padding: 10px 20px; 
+              background: #4CAF50; color: white; 
+              text-decoration: none; border-radius: 5px;">
+        Login Now
+    </a>
+    <p>Or copy and paste this link:</p>
+    <p>{{ login_url }}</p>
+    <hr>
+    <p style="color: #666; font-size: 12px;">
+        This is an automated message, please do not reply to this email.
+    </p>
+</div>

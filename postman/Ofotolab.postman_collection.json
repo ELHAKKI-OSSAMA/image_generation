@@ -1,0 +1,243 @@
+{
+    "info": {
+        "name": "Ofotolab API",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Logs",
+            "item": [
+                {
+                    "name": "Get Logs",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/logs?page=1&limit=50",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "logs"],
+                            "query": [
+                                {
+                                    "key": "start_date",
+                                    "value": "2024-03-17T00:00:00Z",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "end_date",
+                                    "value": "2024-03-17T23:59:59Z",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "levels",
+                                    "value": "error,critical",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "categories",
+                                    "value": "api,security",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "page",
+                                    "value": "1"
+                                },
+                                {
+                                    "key": "limit",
+                                    "value": "50"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Log Statistics",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/logs/statistics",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "logs", "statistics"],
+                            "query": [
+                                {
+                                    "key": "start_date",
+                                    "value": "2024-03-10T00:00:00Z",
+                                    "disabled": true
+                                },
+                                {
+                                    "key": "end_date",
+                                    "value": "2024-03-17T23:59:59Z",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Cleanup Logs",
+                    "request": {
+                        "method": "DELETE",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/logs/cleanup?older_than=2024-02-17T00:00:00Z",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "logs", "cleanup"],
+                            "query": [
+                                {
+                                    "key": "older_than",
+                                    "value": "2024-02-17T00:00:00Z"
+                                },
+                                {
+                                    "key": "categories",
+                                    "value": "api,system",
+                                    "disabled": true
+                                }
+                            ]
+                        }
+                    }
+                }
+            ]
+        },
+        {
+            "name": "Analytics",
+            "item": [
+                {
+                    "name": "Get Error Trends",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/error-trends?timeframe=24h&interval=1h",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "analytics", "error-trends"],
+                            "query": [
+                                {
+                                    "key": "timeframe",
+                                    "value": "24h"
+                                },
+                                {
+                                    "key": "interval",
+                                    "value": "1h"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Performance Metrics",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/performance?timeframe=24h",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "analytics", "performance"],
+                            "query": [
+                                {
+                                    "key": "timeframe",
+                                    "value": "24h"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Detect Anomalies",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/anomalies?sensitivity=2.0",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "analytics", "anomalies"],
+                            "query": [
+                                {
+                                    "key": "sensitivity",
+                                    "value": "2.0"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get User Activity",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/user-activity?timeframe=24h",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "analytics", "user-activity"],
+                            "query": [
+                                {
+                                    "key": "timeframe",
+                                    "value": "24h"
+                                }
+                            ]
+                        }
+                    }
+                },
+                {
+                    "name": "Get Security Analysis",
+                    "request": {
+                        "method": "GET",
+                        "header": [
+                            {
+                                "key": "Authorization",
+                                "value": "Bearer {{token}}",
+                                "type": "text"
+                            }
+                        ],
+                        "url": {
+                            "raw": "{{base_url}}/api/v1/analytics/security",
+                            "host": ["{{base_url}}"],
+                            "path": ["api", "v1", "analytics", "security"]
+                        }
+                    }
+                }
+            ]
+        }
+    ]
+}

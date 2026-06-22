@@ -1,0 +1,52 @@
+{
+    "permission": [
+        {
+            "name": "Manage Organization Settings",
+            "description": "Can update organization profile, settings, and configuration",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_ORGANIZATION"
+        },
+        {
+            "name": "Manage Organization Members",
+            "description": "Can invite, remove, and update roles of organization members",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_ORGANIZATION"
+        },
+        {
+            "name": "View Organization Analytics",
+            "description": "Can view organization statistics and reports",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_ORGANIZATION"
+        },
+        {
+            "name": "Manage Events",
+            "description": "Can create, edit, and delete events",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_EVENTS"
+        },
+        {
+            "name": "View Events",
+            "description": "Can view all organization events",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_EVENTS"
+        },
+        {
+            "name": "Participate in Events",
+            "description": "Can register and participate in events",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_EVENTS"
+        },
+        {
+            "name": "Manage Participants",
+            "description": "Can manage event participants and registrations",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_USERS"
+        },
+        {
+            "name": "View Participant Data",
+            "description": "Can view participant information and statistics",
+            "role": "ORGANIZATION",
+            "type": "MANAGE_USERS"
+        }
+    ]
+}

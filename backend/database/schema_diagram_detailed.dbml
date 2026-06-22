@@ -1,0 +1,312 @@
+// Detailed Image Generation B2B Platform Database Schema
+// Schema name: img_gen
+// Description: Comprehensive database schema with detailed relationships and explanations
+
+Project ImageGenerationPlatform {
+  database_type: 'PostgreSQL'
+  Note: '''
+    This schema represents a B2B image generation platform where:
+    - Organizations (clients) can register and manage their accounts
+    - Each organization can have multiple staff members with different roles
+    - Organizations can create and manage events
+    - Events have attendees who can generate AI-enhanced images
+    - The system tracks usage, security, and API access
+  '''
+}
+
+//-----------------
+// CORE ENTITIES
+//-----------------
+
+Table client {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  name varchar(255) [not null]
+  status varchar(50) [not null, default: 'pending']
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  subscription_tier varchar(50) [not null, default: 'trial']
+  max_users integer [not null, default: 5]
+  max_storage_gb integer [not null, default: 10]
+
+  indexes {
+    name // For quick organization search
+    status // For filtering organizations by status
+  }
+
+  note: '''
+    Core table for B2B organizations (clients)
+    - Manages organization-level settings and limits
+    - Subscription tier determines feature access
+    - Status tracks organization lifecycle (pending, active, suspended)
+    - Storage and user limits are enforced per subscription tier
+  '''
+}
+
+Table member {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  organization_id UUID [not null]
+  email varchar(255) [unique, not null]
+  password_hash varchar(255) [not null]
+  first_name varchar(100)
+  last_name varchar(100)
+  role varchar(50) [not null, default: 'staff']
+  status varchar(50) [not null, default: 'pending']
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  last_login timestamptz
+
+  indexes {
+    email // For login and unique constraint
+    organization_id // For filtering members by organization
+    (organization_id, role) // For role-based access control
+  }
+
+  note: '''
+    Organization staff members with different access levels
+    - Each member belongs to one organization
+    - Roles include: admin, staff
+    - Email must be unique across the platform
+    - Password is stored as a secure hash
+    - Status tracks member account state (pending, active, suspended)
+  '''
+}
+
+//-----------------
+// EVENT MANAGEMENT
+//-----------------
+
+Table event {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  organization_id UUID [not null]
+  name varchar(255) [not null]
+  description text
+  start_date timestamptz [not null]
+  end_date timestamptz [not null]
+  status varchar(50) [not null, default: 'upcoming']
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  created_by UUID [not null]
+  max_participants integer
+  location varchar(255)
+
+  indexes {
+    organization_id // For filtering events by organization
+    status // For event status filtering
+    start_date // For date-based queries
+    created_by // For audit tracking
+  }
+
+  note: '''
+    Photo session events where images are generated
+    - Each event belongs to one organization
+    - Created by an organization member
+    - Tracks event details, timing, and capacity
+    - Status lifecycle: upcoming -> active -> completed -> archived
+    - Can limit maximum participants
+  '''
+}
+
+Table image {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  event_id UUID [not null]
+  created_by UUID [not null]
+  original_url text [not null]
+  generated_url text [not null]
+  prompt text
+  status varchar(50) [not null, default: 'processing']
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  metadata jsonb
+  processing_time integer
+
+  indexes {
+    event_id // For filtering images by event
+    created_by // For filtering by creator
+    status // For processing status queries
+    created_at // For timeline queries
+  }
+
+  note: '''
+    Stores both original and AI-generated images
+    - Each image is associated with an event
+    - Created by an event attendee
+    - Tracks original and generated image URLs
+    - Contains AI prompt used for generation
+    - Status lifecycle: processing -> completed -> failed
+    - Metadata stores image properties and AI parameters
+    - Processing time tracked for performance monitoring
+  '''
+}
+
+Table attendee {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  event_id UUID [not null]
+  organization_id UUID [not null]
+  name varchar(255) [not null]
+  email varchar(255)
+  phone varchar(50)
+  registration_code varchar(100) [unique]
+  check_in_time timestamptz
+  check_out_time timestamptz
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  created_by UUID [not null]
+
+  indexes {
+    event_id // For filtering attendees by event
+    organization_id // For organization-level queries
+    registration_code // For quick lookup during check-in
+    email // For attendee contact information
+  }
+
+  note: '''
+    Event attendees who can generate images
+    - Each attendee is linked to an event and organization
+    - Created by an organization member
+    - Unique registration code for event access
+    - Optional contact information
+    - Tracks check-in/out times for event participation
+  '''
+}
+
+//-----------------
+// SECURITY & MONITORING
+//-----------------
+
+Table key {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  organization_id UUID [not null]
+  key_hash varchar(255) [not null]
+  name varchar(100) [not null]
+  created_by UUID [not null]
+  expires_at timestamptz
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  last_used_at timestamptz
+  status varchar(50) [not null, default: 'active']
+
+  indexes {
+    organization_id // For filtering keys by organization
+    key_hash // For API authentication
+    status // For key status filtering
+  }
+
+  note: '''
+    API authentication keys for programmatic access
+    - Each key belongs to an organization
+    - Created by an organization member
+    - Keys can be temporary (with expiration) or permanent
+    - Status tracks key lifecycle (active, revoked)
+    - Usage tracking for security monitoring
+  '''
+}
+
+Table stat {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  organization_id UUID [not null]
+  event_id UUID
+  date date [not null, default: `CURRENT_DATE`]
+  images_generated integer [not null, default: 0]
+  storage_used_bytes bigint [not null, default: 0]
+  api_calls integer [not null, default: 0]
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    organization_id // For organization usage queries
+    date // For date-based filtering
+    (organization_id, date) // For daily organization stats
+  }
+
+  note: '''
+    Daily resource usage tracking for billing
+    - Tracks usage metrics per organization
+    - Optional event-level tracking
+    - Metrics include:
+      * Number of images generated
+      * Storage space used
+      * API call count
+    - Used for billing and quota enforcement
+  '''
+}
+
+Table log {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  organization_id UUID [not null]
+  user_id UUID
+  action varchar(100) [not null]
+  resource_type varchar(50) [not null]
+  resource_id UUID
+  details jsonb
+  ip_address inet
+  user_agent text
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+
+  indexes {
+    organization_id // For organization audit trails
+    user_id // For user activity tracking
+    created_at // For timeline queries
+    action // For filtering by action type
+  }
+
+  note: '''
+    Security audit trail for all system actions
+    - Tracks all important system actions
+    - Links actions to organizations and users
+    - Stores action details in JSON format
+    - Records IP and user agent for security
+    - Used for:
+      * Security monitoring
+      * Compliance reporting
+      * Activity tracking
+      * Issue investigation
+  '''
+}
+
+Table request {
+  id UUID [pk, default: `uuid_generate_v4()`]
+  organization_id UUID [not null]
+  type varchar(50) [not null]
+  status varchar(50) [not null, default: 'pending']
+  details jsonb
+  created_by UUID [not null]
+  created_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  updated_at timestamptz [not null, default: `CURRENT_TIMESTAMP`]
+  resolved_at timestamptz
+  resolved_by UUID
+  resolution_notes text
+
+  indexes {
+    organization_id // For organization request filtering
+    status // For request status filtering
+    type // For request type filtering
+    created_at // For timeline queries
+  }
+
+  note: '''
+    Tracks organization requests and their resolution
+    - Each request belongs to an organization
+    - Created by an organization member
+    - Types include: feature access, limit increase, support
+    - Status lifecycle: pending -> in_review -> approved/rejected
+    - Tracks resolution details and timing
+    - Used for managing organization needs and support
+  '''
+}
+
+// Relationship definitions with detailed explanations
+Ref: "client"."id" < "member"."organization_id" [update: cascade, delete: cascade]
+Ref: "client"."id" < "event"."organization_id" [update: cascade, delete: cascade]
+Ref: "client"."id" < "attendee"."organization_id" [update: cascade, delete: cascade]
+Ref: "client"."id" < "key"."organization_id" [update: cascade, delete: cascade]
+Ref: "client"."id" < "stat"."organization_id" [update: cascade, delete: cascade]
+Ref: "client"."id" < "log"."organization_id" [update: cascade, delete: cascade]
+Ref: "client"."id" < "request"."organization_id" [update: cascade, delete: cascade]
+Ref: "event"."id" < "image"."event_id" [update: cascade, delete: cascade]
+Ref: "event"."id" < "attendee"."event_id" [update: cascade, delete: cascade]
+Ref: "member"."id" < "event"."created_by" [update: cascade, delete: set null]
+Ref: "attendee"."id" < "image"."created_by" [update: cascade, delete: set null]
+Ref: "member"."id" < "attendee"."created_by" [update: cascade, delete: set null]
+Ref: "member"."id" < "key"."created_by" [update: cascade, delete: set null]
+Ref: "member"."id" < "request"."created_by" [update: cascade, delete: set null]
+Ref: "member"."id" < "request"."resolved_by" [update: cascade, delete: set null]
+Ref: "member"."id" < "log"."user_id" [update: cascade, delete: set null]
+Ref: "event"."id" < "stat"."event_id" [update: cascade, delete: set null]

@@ -1,0 +1,41 @@
+[
+  {
+    "price":5,
+    "image_limit":100,
+    "user_type":"user",
+    "description":"User - 100 tokens"
+  },
+  {
+    "price":10,
+    "image_limit":250,
+    "user_type":"user",
+    "description":"User - 250 tokens"
+  },
+  {
+    "price":20,
+    "image_limit":1000,
+    "user_type":"user",
+    "description":"User - 1000 tokens"
+  },
+  {
+    "price":50,
+    "user_type":"organization",
+    "time_limit":7,
+    "stockage":1,
+    "description":"Org - 7 days unlimited"
+  },
+  {
+    "price":90,
+    "user_type":"organization",
+    "time_limit":14,
+    "stockage":2,
+    "description":"Org - 14 days unlimited"
+  },
+  {
+    "price":150,
+    "user_type":"organization",
+    "time_limit":30,
+    "stockage":5,
+    "description":"Org - 30 days unlimited"
+  }
+]

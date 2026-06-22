@@ -1,0 +1,217 @@
+{
+	"info": {
+		"_postman_id": "1234-5678-9012-3456",
+		"name": "SD Model Endpoints",
+		"description": "Collection for testing SD Model endpoints with JWT authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Login as Admin",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.environment.set(\"jwt_token\", jsonData.access_token);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"aoubido075@gmail.com\",\n    \"password\": \"Ad123456789#\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "auth", "login"]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "SD Models",
+			"item": [
+				{
+					"name": "Create SD Model (Admin Only)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Test SD Model\",\n    \"description\": \"A test SD model for testing\",\n    \"sdmodel_version_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/models/sd",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "models", "sd"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List SD Models",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/models/sd",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "models", "sd"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get SD Model by ID",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/models/sd/{{model_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "models", "sd", "{{model_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update SD Model",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Updated SD Model\",\n    \"description\": \"An updated test SD model\",\n    \"sdmodel_version_id\": 1\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/models/sd/{{model_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "models", "sd", "{{model_id}}"]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete SD Model",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{jwt_token}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/models/sd/{{model_id}}",
+							"host": ["{{base_url}}"],
+							"path": ["api", "v1", "models", "sd", "{{model_id}}"]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://iaphotoshot.com",
+			"type": "string"
+		},
+		{
+			"key": "jwt_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "model_id",
+			"value": "",
+			"type": "string"
+		}
+	]
+}

@@ -1,0 +1,149 @@
+---
+title: Ofotolab Image Generation Platform
+---
+erDiagram
+    %% Platform Administration
+    ADMINS {
+        uuid id PK
+        varchar(255) email UK
+        varchar(255) password_hash
+        varchar(100) first_name
+        varchar(100) last_name
+        varchar(50) role "DEFAULT 'admin'"
+        varchar(50) status "DEFAULT 'active'"
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz last_login
+    }
+
+    %% Client Organizations
+    ORGANIZATIONS {
+        uuid id PK
+        varchar(255) name
+        varchar(255) contact_email
+        varchar(50) contact_phone
+        varchar(50) status "DEFAULT 'pending'"
+        uuid approved_by FK
+        timestamptz approved_at
+        varchar(50) subscription_tier "DEFAULT 'trial'"
+        integer max_users "DEFAULT 5"
+        integer max_storage_gb "DEFAULT 10"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    ORGANIZATION_MEMBERS {
+        uuid id PK
+        uuid organization_id FK
+        varchar(255) email
+        varchar(255) password_hash
+        varchar(100) first_name
+        varchar(100) last_name
+        varchar(50) role "DEFAULT 'member'"
+        varchar(50) status "DEFAULT 'active'"
+        timestamptz created_at
+        timestamptz updated_at
+        timestamptz last_login
+    }
+
+    %% Event Management
+    EVENTS {
+        uuid id PK
+        uuid organization_id FK
+        varchar(255) name
+        text description
+        timestamptz start_date
+        timestamptz end_date
+        varchar(50) status "DEFAULT 'upcoming'"
+        uuid created_by FK
+        integer max_participants
+        varchar(255) location
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    EVENT_PARTICIPANTS {
+        uuid id PK
+        uuid event_id FK
+        varchar(255) participant_name
+        varchar(255) participant_email
+        timestamptz created_at
+    }
+
+    IMAGES {
+        uuid id PK
+        uuid event_id FK
+        uuid participant_id FK
+        text original_url
+        text generated_url
+        text prompt
+        varchar(50) status "DEFAULT 'processing'"
+        jsonb metadata
+        integer processing_time
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    %% Security & Monitoring
+    API_KEYS {
+        uuid id PK
+        uuid organization_id FK
+        varchar(255) key_hash
+        varchar(100) name
+        uuid created_by FK
+        uuid approved_by FK
+        timestamptz expires_at
+        varchar(50) status "DEFAULT 'active'"
+        timestamptz created_at
+        timestamptz last_used_at
+    }
+
+    USAGE_STATISTICS {
+        uuid id PK
+        uuid organization_id FK
+        uuid event_id FK
+        date date "DEFAULT CURRENT_DATE"
+        integer images_generated "DEFAULT 0"
+        bigint storage_used_bytes "DEFAULT 0"
+        integer api_calls "DEFAULT 0"
+        timestamptz created_at
+        timestamptz updated_at
+    }
+
+    AUDIT_LOGS {
+        uuid id PK
+        uuid organization_id FK
+        uuid admin_id FK
+        uuid member_id FK
+        varchar(100) action
+        varchar(50) resource_type
+        uuid resource_id
+        jsonb details
+        inet ip_address
+        text user_agent
+        timestamptz created_at
+    }
+
+    %% Relationships
+    %% Administrative Control
+    ADMINS ||--o{ ORGANIZATIONS : "approves"
+    ADMINS ||--o{ API_KEYS : "approves"
+    ADMINS ||--o{ AUDIT_LOGS : "performs"
+
+    %% Organization Structure
+    ORGANIZATIONS ||--o{ ORGANIZATION_MEMBERS : "has"
+    ORGANIZATIONS ||--o{ EVENTS : "organizes"
+    ORGANIZATIONS ||--o{ API_KEYS : "owns"
+    ORGANIZATIONS ||--o{ USAGE_STATISTICS : "tracks"
+    ORGANIZATIONS ||--o{ AUDIT_LOGS : "logs"
+
+    %% Event Management
+    EVENTS ||--o{ EVENT_PARTICIPANTS : "has"
+    EVENTS ||--o{ IMAGES : "generates"
+    EVENTS ||--o{ USAGE_STATISTICS : "tracks"
+    ORGANIZATION_MEMBERS ||--o{ EVENTS : "creates"
+
+    %% Security & Access
+    ORGANIZATION_MEMBERS ||--o{ API_KEYS : "creates"
+    EVENT_PARTICIPANTS ||--o{ IMAGES : "takes"
+    ORGANIZATION_MEMBERS ||--o{ AUDIT_LOGS : "generates"

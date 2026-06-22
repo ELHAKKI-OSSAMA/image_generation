@@ -1,0 +1,66 @@
+# Docker Compose for the experimental microservices stack.
+# Secrets are read from a local .env file (see .env.example) — never hard-code them here.
+services:
+  db:
+    image: postgres:14-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-ofotolab}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your .env}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - backend
+
+  gateway:
+    build:
+      context: ./backend
+      dockerfile: gateway/Dockerfile
+    ports:
+      - "8000:8000"
+    depends_on:
+      - image_service
+      - model_service
+    environment:
+      IMAGE_SERVICE_URL: "http://image_service:8003"
+      MODEL_SERVICE_URL: "http://model_service:8001"
+    networks:
+      - backend
+
+  image_service:
+    build:
+      context: ./backend
+      dockerfile: services/image_service/Dockerfile
+    ports:
+      - "8003:8003"
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER:-postgres}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in your .env}@db:5432/${POSTGRES_DB:-ofotolab}"
+    networks:
+      - backend
+
+  model_service:
+    build:
+      context: ./backend
+      dockerfile: services/model_service/Dockerfile
+    ports:
+      - "8001:8001"
+    networks:
+      - backend
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge
+
+volumes:
+  postgres_data:

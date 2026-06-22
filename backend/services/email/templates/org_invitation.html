@@ -1,0 +1,20 @@
+<div style="max-width: 600px; margin: 0 auto; padding: 20px; font-family: Arial, sans-serif;">
+    <h2>Organization Invitation</h2>
+    <p>Hello {{ first_name }},</p>
+    <p>You have been invited to join <strong>{{ org_name }}</strong>.</p>
+    <p>Click the button below to accept the invitation:</p>
+    <a href="{{ accept_url }}" 
+       style="display: inline-block; padding: 10px 20px; 
+              background: #2196F3; color: white; 
+              text-decoration: none; border-radius: 5px;">
+        Accept Invitation
+    </a>
+    <p>Or copy and paste this link:</p>
+    <p>{{ accept_url }}</p>
+    <p>This invitation will expire in 7 days.</p>
+    <p>If you did not expect this invitation, please ignore this email.</p>
+    <hr>
+    <p style="color: #666; font-size: 12px;">
+        This is an automated message, please do not reply to this email.
+    </p>
+</div>
